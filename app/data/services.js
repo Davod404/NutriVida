@@ -1,5 +1,4 @@
 export const services = [
-    // CONSULTAS
     {
         code: "CN001",
         type: "Consulta",
@@ -56,7 +55,6 @@ export const services = [
             "Para pacientes que requieren atención fuera de su control habitual.",
     },
 
-    // PLANES ESPECIALIZADOS
     {
         code: "PL001",
         type: "Plan especializado",
@@ -124,7 +122,6 @@ export const services = [
             "Evaluación nutricional pediátrica y diseño de plan adaptado a la etapa de desarrollo del niño.",
     },
 
-    // EVALUACIONES
     {
         code: "EV001",
         type: "Evaluación",
@@ -170,7 +167,6 @@ export const services = [
             "Interpretación de hemograma, perfil bioquímico y lipídico en contexto nutricional.",
     },
 
-    // TALLERES GRUPALES
     {
         code: "TG001",
         type: "Taller grupal",

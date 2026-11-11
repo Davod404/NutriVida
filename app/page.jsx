@@ -6,45 +6,18 @@ import PublicLayout from "./components/templates/PublicLayout";
 import Button from "./components/atoms/Button";
 import Icon from "./components/atoms/Icon";
 import ServiceCard from "./components/molecules/ServiceCard";
+import { services } from "./data/services";
+import { getServiceIcon, formatPrice } from "./utils/services";
 
-const services = [
-    {
-        code: "NV-01",
-        type: "Consulta",
-        name: "Evaluación nutricional integral",
-        duration: "60 min",
-        mode: "Presencial",
-        pro: "Nutricionista clínico",
-        price: "$38.000",
-        text: "Conoce tu estado nutricional y recibe una estrategia personalizada según tus objetivos.",
-        icon: "heart",
-    },
-    {
-        code: "NV-02",
-        type: "Plan",
-        name: "Plan Equilibrio",
-        duration: "8 semanas",
-        mode: "Híbrida",
-        pro: "Equipo NutriVida",
-        price: "$98.000",
-        text: "Acompañamiento completo con controles, plan alimenticio y seguimiento de progreso.",
-        icon: "leaf",
-    },
-    {
-        code: "NV-03",
-        type: "Consulta",
-        name: "Nutrición deportiva",
-        duration: "50 min",
-        mode: "Presencial / Online",
-        pro: "Especialista deportivo",
-        price: "$42.000",
-        text: "Optimiza tu rendimiento y recuperación con un plan adaptado a tu disciplina.",
-        icon: "chart",
-    },
-];
+const DESTACADOS = ["CN001", "PL001", "CN004"];
+const FEATURED_CODE = "PL001";
 
 export default function Home() {
     const router = useRouter();
+
+    const destacados = DESTACADOS.map((code) =>
+        services.find((service) => service.code === code)
+    ).filter(Boolean);
 
     return (
         <PublicLayout>
@@ -72,9 +45,10 @@ export default function Home() {
                         </p>
 
                         <div className="hero-actions">
-                            <Button 
+                            <Button
                                 variant="primary"
-                                onClick={() => router.push("/agendar")}>
+                                onClick={() => router.push("/agendar")}
+                            >
                                 Agendar mi primera cita
                                 <Icon name="arrow" size={18} />
                             </Button>
@@ -83,7 +57,6 @@ export default function Home() {
                                 variant="outline"
                                 onClick={() => router.push("/servicios")}
                             >
-
                                 Conocer nuestros planes
                             </Button>
                         </div>
@@ -142,32 +115,15 @@ export default function Home() {
             <section className="benefits">
                 <div className="container benefits-grid">
                     {[
-                        [
-                            "heart",
-                            "Atención humana",
-                            "Te escuchamos y acompañamos sin juicios.",
-                        ],
-                        [
-                            "file",
-                            "Planes realistas",
-                            "Adaptados a tu rutina y preferencias.",
-                        ],
-                        [
-                            "chart",
-                            "Progreso visible",
-                            "Sigue tu evolución de forma simple.",
-                        ],
-                        [
-                            "calendar",
-                            "Todo en un lugar",
-                            "Agenda y revisa tu plan cuando quieras.",
-                        ],
+                        ["heart", "Atención humana", "Te escuchamos y acompañamos sin juicios."],
+                        ["file", "Planes realistas", "Adaptados a tu rutina y preferencias."],
+                        ["chart", "Progreso visible", "Sigue tu evolución de forma simple."],
+                        ["calendar", "Todo en un lugar", "Agenda y revisa tu plan cuando quieras."],
                     ].map(([icon, title, text]) => (
                         <div className="benefit" key={title}>
                             <span>
                                 <Icon name={icon} />
                             </span>
-
                             <div>
                                 <h3>{title}</h3>
                                 <p>{text}</p>
@@ -181,12 +137,8 @@ export default function Home() {
                 <div className="section-heading">
                     <div>
                         <div className="eyebrow">Servicios destacados</div>
-
                         <h2>Un plan para cada etapa de tu vida</h2>
-
-                        <p>
-                            Elige cómo quieres comenzar. Nosotros te ayudamos a avanzar.
-                        </p>
+                        <p>Elige cómo quieres comenzar. Nosotros te ayudamos a avanzar.</p>
                     </div>
 
                     <button
@@ -199,19 +151,19 @@ export default function Home() {
                 </div>
 
                 <div className="service-grid">
-                    {services.map((service, index) => (
+                    {destacados.map((service) => (
                         <ServiceCard
                             key={service.code}
                             code={service.code}
                             type={service.type}
                             title={service.name}
-                            description={service.text}
+                            description={service.description}
                             duration={service.duration}
                             modality={service.mode}
-                            price={service.price}
-                            icon={service.icon}
-                            featured={index === 1}
-                            popular={index === 1}
+                            price={formatPrice(service.price)}
+                            icon={getServiceIcon(service.type)}
+                            featured={service.code === FEATURED_CODE}
+                            popular={service.code === FEATURED_CODE}
                             onBook={() => router.push(`/agendar?servicio=${service.code}`)}
                         />
                     ))}
@@ -222,12 +174,8 @@ export default function Home() {
                 <div className="container">
                     <div className="center-heading">
                         <div className="eyebrow">Nuestro equipo</div>
-
                         <h2>Profesionales que te acompañan</h2>
-
-                        <p>
-                            Un equipo cercano y especializado, comprometido con tu bienestar.
-                        </p>
+                        <p>Un equipo cercano y especializado, comprometido con tu bienestar.</p>
                     </div>
 
                     <div className="team-grid">
@@ -250,11 +198,9 @@ export default function Home() {
                         ].map(([img, name, specialty]) => (
                             <article className="team-card" key={name}>
                                 <img src={img} alt={name} />
-
                                 <div>
                                     <h3>{name}</h3>
                                     <p>{specialty}</p>
-
                                     <button onClick={() => router.push("/agendar")}>
                                         Ver disponibilidad
                                         <Icon name="arrow" size={16} />
@@ -269,18 +215,17 @@ export default function Home() {
             <section className="container cta">
                 <div>
                     <div className="eyebrow light">Da el primer paso</div>
-
                     <h2>¿Lista para sentirte mejor?</h2>
-
                     <p>
                         Agenda tu evaluación inicial y comencemos a construir un plan que
                         funcione para ti.
                     </p>
                 </div>
 
-                <Button 
+                <Button
                     variant="secondary"
-                    onClick={() => router.push("/agendar")}>
+                    onClick={() => router.push("/agendar")}
+                >
                     Agendar evaluación
                     <Icon name="calendar" size={18} />
                 </Button>

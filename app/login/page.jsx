@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { login, getMe } from "../utils/api";
 
 import Logo from "../components/atoms/Logo";
 import Icon from "../components/atoms/Icon";
@@ -10,30 +11,42 @@ import Field from "../components/molecules/Field";
 
 export default function LoginPage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const redirect = searchParams.get("redirect") || "/citas";
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
+        setError("");
 
-        if (email === "" || password === "") {
+        if (!email || !password) {
             setError("Completa todos los campos.");
             return;
         }
 
-        if (email === "admin@nutrivida.cl") {
-            router.push("/admin");
-            return;
-        }
+        try {
+            await login(email, password);
+            const perfil = await getMe();
+            
+            localStorage.setItem("usuarioActivo", JSON.stringify({
+                email: perfil.email,
+                rol: perfil.rol,
+                nombre: perfil.nombre,
+                apellido: perfil.apellido,
+                pacienteId: perfil.pacienteId,
+                nutricionistaId: perfil.nutricionistaId
+            }));
 
-        if (email === "camila@nutrivida.cl") {
-            router.push("/nutricionista");
-            return;
-        }
+            if (perfil.rol === "Administrador") router.push("/admin");
+            else if (perfil.rol === "Nutricionista") router.push("/nutricionista");
+            else router.push(redirect);
 
-        router.push("/citas");
+        } catch (err) {
+            setError("Credenciales incorrectas o error de conexión.");
+        }
     };
 
     return (
@@ -43,13 +56,11 @@ export default function LoginPage() {
 
                 <div className="auth-quote">
                     <span className="quote-mark">“</span>
-
                     <h2>
                         Pequeños cambios,
                         <br />
                         grandes resultados.
                     </h2>
-
                     <p>
                         Tu salud es un proceso. Nosotros estaremos contigo en cada paso.
                     </p>
@@ -73,9 +84,7 @@ export default function LoginPage() {
 
                     <h1>Bienvenido de vuelta</h1>
 
-                    <p>
-                        Ingresa a tu espacio personal y continúa tu proceso.
-                    </p>
+                    <p>Ingresa a tu espacio personal y continúa tu proceso.</p>
 
                     <form onSubmit={handleLogin}>
                         <div className="form-grid">
@@ -103,21 +112,17 @@ export default function LoginPage() {
                                 <input type="checkbox" /> Recordarme
                             </label>
 
-                            <button type="button">
+                            <button
+                                type="button"
+                                onClick={() => alert("Contacta a soporte a hola@nutrivida.cl para recuperar tu contraseña.")}
+                            >
                                 ¿Olvidaste tu contraseña?
                             </button>
                         </div>
 
-                        {error && (
-                            <p className="form-error">
-                                {error}
-                            </p>
-                        )}
+                        {error && <p className="form-error">{error}</p>}
 
-                        <Button
-                            type="submit"
-                            className="auth-submit justify-center"
-                        >
+                        <Button type="submit" className="auth-submit">
                             Ingresar a mi cuenta
                             <Icon name="arrow" size={18} />
                         </Button>
@@ -127,6 +132,24 @@ export default function LoginPage() {
                         ¿Aún no tienes una cuenta?{" "}
                         <button onClick={() => router.push("/registro")}>
                             Regístrate gratis
+                        </button>
+                    </div>
+
+                    <div style={{ marginTop: "24px", textAlign: "center" }}>
+                        <button
+                            type="button"
+                            onClick={() => router.push("/")}
+                            style={{
+                                background: "none",
+                                border: "none",
+                                color: "var(--green)",
+                                fontSize: "12px",
+                                fontWeight: "600",
+                                cursor: "pointer",
+                                textDecoration: "underline"
+                            }}
+                        >
+                            ← Volver al inicio
                         </button>
                     </div>
                 </div>

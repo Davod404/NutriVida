@@ -1,4 +1,4 @@
-export default function Icon({ name, size = 20 }) {
+export default function Icon({ name, size = 20, style, className }) {
     const paths = {
         leaf: (
             <>
@@ -120,6 +120,8 @@ export default function Icon({ name, size = 20 }) {
             strokeLinecap="round"
             strokeLinejoin="round"
             aria-hidden="true"
+            style={style}
+            className={className}
         >
             {paths[name]}
         </svg>

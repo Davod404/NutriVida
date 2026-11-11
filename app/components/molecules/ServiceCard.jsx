@@ -11,6 +11,7 @@ export default function ServiceCard({
     icon,
     featured = false,
     popular = false,
+    onBook,
 }) {
     return (
         <article className={`service-card ${featured ? "featured" : ""}`}>
@@ -48,7 +49,7 @@ export default function ServiceCard({
                     <b>{price}</b>
                 </div>
 
-                <button>
+                <button onClick={onBook} aria-label="Agendar este servicio">
                     <Icon name="arrow" />
                 </button>
             </div>

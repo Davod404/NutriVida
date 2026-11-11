@@ -7,19 +7,51 @@ import PageTitle from "../components/molecules/PageTitle";
 import Metric from "../components/molecules/Metric";
 import Button from "../components/atoms/Button";
 
+const bars = [72, 68, 63, 60, 55, 51];
+const values = [72.5, 71.8, 70.9, 69.8, 69.1, 68.2];
+const months = ["Ene", "Feb", "Mar", "Abr", "May", "Jun"];
+
+const measurements = [
+    {
+        id: 1,
+        fecha: "18 Jun 2025",
+        peso: "68,2 kg",
+        talla: "168 cm",
+        cintura: "78 cm",
+        imc: "24,1",
+        variacion: "−0,9 kg",
+    },
+    {
+        id: 2,
+        fecha: "21 May 2025",
+        peso: "69,1 kg",
+        talla: "168 cm",
+        cintura: "80 cm",
+        imc: "24,5",
+        variacion: "−0,7 kg",
+    },
+    {
+        id: 3,
+        fecha: "23 Abr 2025",
+        peso: "69,8 kg",
+        talla: "168 cm",
+        cintura: "81 cm",
+        imc: "24,7",
+        variacion: "−1,1 kg",
+    },
+    {
+        id: 4,
+        fecha: "19 Mar 2025",
+        peso: "70,9 kg",
+        talla: "168 cm",
+        cintura: "83 cm",
+        imc: "25,1",
+        variacion: "−0,9 kg",
+    },
+];
+
 export default function ProgresoPage() {
     const [periodo, setPeriodo] = useState("6");
-
-    const bars = [72, 68, 63, 60, 55, 51];
-    const values = [72.5, 71.8, 70.9, 69.8, 69.1, 68.2];
-    const months = ["Ene", "Feb", "Mar", "Abr", "May", "Jun"];
-
-    const measurements = [
-        ["18 Jun 2025", "68,2 kg", "168 cm", "78 cm", "24,1", "−0,9 kg"],
-        ["21 May 2025", "69,1 kg", "168 cm", "80 cm", "24,5", "−0,7 kg"],
-        ["23 Abr 2025", "69,8 kg", "168 cm", "81 cm", "24,7", "−1,1 kg"],
-        ["19 Mar 2025", "70,9 kg", "168 cm", "83 cm", "25,1", "−0,9 kg"],
-    ];
 
     const cantidad = Number(periodo);
 
@@ -28,6 +60,13 @@ export default function ProgresoPage() {
     const visibleMonths = months.slice(-cantidad);
 
     function descargarInforme() {
+        const historial = measurements
+            .map(
+                (m) =>
+                    `${m.fecha} | ${m.peso} | ${m.talla} | ${m.cintura} | ${m.imc} | ${m.variacion}`
+            )
+            .join("\n");
+
         const contenido = `
 INFORME DE PROGRESO - NUTRIVIDA
 
@@ -47,12 +86,7 @@ Progreso: 68%
 
 HISTORIAL DE MEDICIONES
 
-${measurements
-    .map(
-        (row) =>
-            `${row[0]} | ${row[1]} | ${row[2]} | ${row[3]} | ${row[4]} | ${row[5]}`
-    )
-    .join("\n")}
+${historial}
 `;
 
         const archivo = new Blob([contenido], {
@@ -107,24 +141,15 @@ ${measurements
                         <div>
                             <h2>Evolución de peso</h2>
 
-                            <p>
-                                Últimos {periodo} meses
-                            </p>
+                            <p>Últimos {periodo} meses</p>
                         </div>
 
                         <select
                             value={periodo}
-                            onChange={(e) =>
-                                setPeriodo(e.target.value)
-                            }
+                            onChange={(e) => setPeriodo(e.target.value)}
                         >
-                            <option value="6">
-                                6 meses
-                            </option>
-
-                            <option value="3">
-                                3 meses
-                            </option>
+                            <option value="6">6 meses</option>
+                            <option value="3">3 meses</option>
                         </select>
                     </div>
 
@@ -138,29 +163,21 @@ ${measurements
 
                         <div className="bar-chart">
                             {visibleBars.map((bar, index) => (
-                                <div
-                                    className="bar-col"
-                                    key={visibleMonths[index]}
-                                >
+                                <div className="bar-col" key={visibleMonths[index]}>
                                     <span className="bar-value">
                                         {visibleValues[index]}
                                     </span>
 
                                     <div
-                                        style={{
-                                            height: `${bar}%`,
-                                        }}
+                                        style={{ height: `${bar}%` }}
                                         className={
-                                            index ===
-                                            visibleBars.length - 1
+                                            index === visibleBars.length - 1
                                                 ? "bar current"
                                                 : "bar"
                                         }
                                     />
 
-                                    <small>
-                                        {visibleMonths[index]}
-                                    </small>
+                                    <small>{visibleMonths[index]}</small>
                                 </div>
                             ))}
                         </div>
@@ -168,9 +185,7 @@ ${measurements
                 </div>
 
                 <div className="panel goal-panel">
-                    <span className="status green">
-                        EN CAMINO
-                    </span>
+                    <span className="status green">EN CAMINO</span>
 
                     <h2>Tu meta</h2>
 
@@ -202,15 +217,10 @@ ${measurements
                     <div>
                         <h2>Historial de mediciones</h2>
 
-                        <p>
-                            Registros realizados por tu nutricionista
-                        </p>
+                        <p>Registros realizados por tu nutricionista</p>
                     </div>
 
-                    <Button
-                        variant="outline"
-                        onClick={descargarInforme}
-                    >
+                    <Button variant="outline" onClick={descargarInforme}>
                         Descargar informe
                     </Button>
                 </div>
@@ -230,19 +240,13 @@ ${measurements
 
                         <tbody>
                             {measurements.map((row) => (
-                                <tr key={row[0]}>
-                                    {row.map((cell, index) => (
-                                        <td
-                                            key={`${row[0]}-${index}`}
-                                            className={
-                                                index === 5
-                                                    ? "positive"
-                                                    : ""
-                                            }
-                                        >
-                                            {cell}
-                                        </td>
-                                    ))}
+                                <tr key={row.id}>
+                                    <td>{row.fecha}</td>
+                                    <td>{row.peso}</td>
+                                    <td>{row.talla}</td>
+                                    <td>{row.cintura}</td>
+                                    <td>{row.imc}</td>
+                                    <td className="positive">{row.variacion}</td>
                                 </tr>
                             ))}
                         </tbody>

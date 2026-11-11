@@ -3,7 +3,7 @@ import Icon from "../atoms/Icon";
 export default function Metric({ icon, label, value, detail }) {
     return (
         <div className="metric">
-            <span className="p-2 rounded-lg bg-[#e9f5ee] text-[#3f8a69]">
+            <span className="metric-icon">
                 <Icon name={icon} />
             </span>
 
